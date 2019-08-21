@@ -25,7 +25,7 @@ from notebook import notebookapp, __version__
 from notebook.auth.security import passwd_check
 NotebookApp = notebookapp.NotebookApp
 
-from .launchnotebook import NotebookTestBase
+from .launchnotebook import NotebookTestBase, UNIXSocketNotebookTestBase
 
 
 def test_help_output():
@@ -192,3 +192,15 @@ class NotebookAppTests(NotebookTestBase):
         servers = list(notebookapp.list_running_servers())
         assert len(servers) >= 1
         assert self.port in {info['port'] for info in servers}
+
+
+# UNIX sockets aren't available on Windows.
+if not sys.platform.startswith('win'):
+    class NotebookUnixSocketTests(UNIXSocketNotebookTestBase):
+        def test_run(self):
+            self.fetch_url(self.base_url() + 'api/contents')
+
+        def test_list_running_sock_servers(self):
+            servers = list(notebookapp.list_running_servers())
+            assert len(servers) >= 1
+            assert self.sock in {info['sock'] for info in servers}

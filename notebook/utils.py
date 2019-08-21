@@ -332,3 +332,18 @@ def maybe_future(obj):
         f.set_result(obj)
         return f
 
+
+def urlencode_unix_socket_path(socket_path):
+    """Encodes a UNIX socket path string from a socket path for the `http+unix` URI form."""
+    return socket_path.replace('/', '%2F')
+
+
+def urldecode_unix_socket_path(socket_path):
+    """Decodes a UNIX sock path string from an encoded sock path for the `http+unix` URI form."""
+    return socket_path.replace('%2F', '/')
+
+
+def urlencode_unix_socket(socket_path):
+    """Encodes a UNIX socket URL from a socket path for the `http+unix` URI form."""
+    return 'http+unix://%s' % urlencode_unix_socket_path(socket_path)
+
